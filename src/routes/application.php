@@ -109,8 +109,8 @@ WHERE student = ? AND event = ?');
             }else{
                 return $response->withJson([
                     'student_applied'=> true,
-                    'student_info' => $stu,
-                    'application_timestamp' => $appl['unix_date']
+                    'application_timestamp' => $appl['unix_date'],
+                    'student_info' => $stu
                 ]);
             }
 

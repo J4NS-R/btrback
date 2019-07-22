@@ -10,13 +10,15 @@ We tried to make the API as REST-compliant as possible. Here is the baseline inf
 
 All queries must have the following format:
 
-    https://backend.breaktherules.co.za/[path]
+    https://backend.breaktherules.co.za/[path]/{params}
     
 - Use `https`.
 - Use the default port (443).
+- Anything in the url with curly braces (`{}`) is a path parameter. Substitute with appropriate values.
 - If doing non-GET requests, body must be in json. Include `Content-Type: application/json` in the headers.
 - Options specified with GET requests should be in the query params (not body).
 - Responses will always be in JSON.
+- Anything date/time related will/must always be in UNIX timestamps (in seconds). Date formatting and timezoning is front-end's responsibility.
 - DO NOT rerun non-GET requests unless the user requests it.
 - If something goes wrong the server will respond with a descriptive message. The HTTP response code also varies depending on how the query ran. Generally:
     - `200`: Everything is okay.
@@ -39,7 +41,7 @@ Include the following header in all requests:
 
 Test whether you can make requests by requesting to root (/). You should get a `200` response if all is good.
 
-At this stage there is no user authorisation. 
+*Note* at this stage there is no user authorisation. 
 
 ### Endpoints
 
@@ -55,7 +57,7 @@ Request body:
 - `entry_year`: int. The year the student started studying their current degree. This will be used to calculate what year they are in.
 - `program_length`: int. The number of years the student's current degree program is.
 - `faculty`: string. The faculty the student is registered in. For data integrity, please give the user a list to pick out of.
-- `majors`: array of strings. The majors the student is registered for. Please give the user a list to pick from and only allow "other" if absolutely necessary. Later I'll make an endpoint to get a list of all registered majors.
+- `majors`: array of strings. The majors the student is registered for. Please give the user a list to pick from and only allow "other" if absolutely necessary. See the `/all_majors` endpoint for getting a dynamic list.
 
 Example request:
 
@@ -71,6 +73,20 @@ Example request:
       ]
     }
     
+#### GET /all_majors
+
+Get a list of all majors that students have registered with. Great for giving users a list to choose from. Still allow for "other" - you always get your edge cases.
+
+Example response:
+
+    {
+      "majors": [
+        "Computer Engineering",
+        "Computer Science",
+        "Accounting",
+        "Economics"
+      ]
+    }
     
 #### GET /student_applied/{stuno}/{eventid}
 
@@ -80,7 +96,7 @@ Example request:
 
     GET https://backend.breaktherules.co.za/ABCDEF001/420
     
-Example response:
+Example response if they have not applied:
 
     {
       "student_applied": false,
@@ -100,7 +116,24 @@ Example response:
     
 Or, if they have applied:
 
-    //todo
+    {
+      "student_applied": true,
+      "application_timestamp": 1563823084,
+      "student_info": {
+        "stuno": "ABCDEF001",
+        "pref_name": "John",
+        "surname": "McLennon",
+        "entry_year": 2017,
+        "program_length": 4,
+        "faculty": "Science",
+        "majors": [
+          "Computer Engineering",
+          "Computer Science"
+        ]
+      }
+    }
+    
+In the latter case, the timestamp when the student applied, is also returned.
     
 #### GET /application_questions/{eventid}
 

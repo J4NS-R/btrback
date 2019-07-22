@@ -7,6 +7,27 @@ use Slim\Http\Response;
 return function (App $app, PDO $pdo) {
     $container = $app->getContainer();
 
+    $app->get('/all_majors', function (Request $request, Response $response, array $args) use ($pdo) {
+
+        $val = validate_request($request);
+        if ($val['success']){
+
+            $stmt = $pdo->prepare('SELECT DISTINCT major_name FROM btr_major');
+            $stmt->execute();
+
+            $majors = [];
+            while($maj = $stmt->fetch()){
+                array_push($majors, $maj['major_name']);
+            }
+
+            return $response->withJson(['majors'=>$majors]);
+
+        }else{
+            return $response->withStatus($val['code'])->withJson($val['response']);
+        }
+
+    });
+
     $app->get('/', function (Request $request, Response $response, array $args) use ($container, $pdo) {
 
         $val = validate_request($request);
