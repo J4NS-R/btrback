@@ -4,7 +4,7 @@ require_once 'environ.php';
 
 return [
     'settings' => [
-        'displayErrorDetails' => APP_IN_PROD, // set to false in production
+        'displayErrorDetails' => !APP_IN_PROD, // set to false in production
         'addContentLengthHeader' => false, // Allow the web server to send the content-length header
 
         // Renderer settings
