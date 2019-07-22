@@ -68,4 +68,37 @@ Example request:
         "Computer Science", "Computer Engineering"
       ]
     }
+    
+    
+#### GET /student_applied/{stuno}/{eventid}
+
+Check whether a student has applied for an event. This endpoint also returns details about a student, for convenience. 
+
+Example request:
+
+    GET https://backend.breaktherules.co.za/ABCDEF001/420
+    
+Example response:
+
+    {
+      "student_applied": false,
+      "student_info": {
+        "stuno": "ABCDEF001",
+        "pref_name": "John",
+        "surname": "McLennon",
+        "entry_year": 2017,
+        "program_length": 4,
+        "faculty": "Science",
+        "majors": [
+          "Computer Science",
+          "Computer Engineering"
+        ]
+      }
+    }
+    
+Or, if they have applied:
+
+    //todo
+    
+
 

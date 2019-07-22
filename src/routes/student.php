@@ -4,8 +4,6 @@ use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-require_once __DIR__ . '/../utils.php';
-
 return function (App $app, PDO $pdo) {
     $container = $app->getContainer();
 
@@ -21,7 +19,7 @@ return function (App $app, PDO $pdo) {
 
     });
 
-    $app->post('/student', function (Request $request, Response $response, array $args) use ($container, $pdo) {
+    $app->post('/student', function (Request $request, Response $response, array $args) use ($pdo) {
 
         $val = validate_request($request);
         if ($val['success']){
