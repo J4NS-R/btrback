@@ -39,6 +39,8 @@ Include the following header in all requests:
 
 Test whether you can make requests by requesting to root (/). You should get a `200` response if all is good.
 
+At this stage there is no user authorisation. 
+
 ### Endpoints
 
 #### POST /student
@@ -117,27 +119,49 @@ Example response:
     {
       "questions": [
         {
+          "qid": 1,
           "question_text": "What motivates you?",
           "answer_type": "paragraph"
         },
         {
+          "qid": 2,
           "question_text": "What kind of bread are you?",
           "answer_type": "shorttext"
         },
         {
+          "qid": 3,
           "question_text": "How long is a piece of wood?",
           "answer_type": "double"
         },
         {
+          "qid": 4,
           "question_text": "How many jelly babies can you fit in your mouth?",
           "answer_type": "int"
         },
         {
+          "qid": 5,
           "question_text": "Write a short fibonacci program. Indicate the language at the top as a comment.",
           "answer_type": "code"
         }
       ]
     }
     
-The array will be empty if the event does not exist, or no questions have been configured yet.
+The question ids (`qid`'s) are important for submitting an application. The array will be empty if the event does not exist, or no questions have been configured yet.
 
+#### POST /application/{stuno}/{eventid}
+
+Submit an application. 
+
+Example request:
+
+    {
+      "answers": {
+        "1": "That which motivates any young man:\nLove.",
+        "2": "Bokomo brown",
+        "3": 23.592,
+        "4": 5,
+        "5": "#python\n\ndef fib(n):\n  return -1\n"
+      }
+    }
+    
+The keys are question id's, and the values are question answers. It is important that all questions for the event's application are filled in. Questions (including id's and answer types) for an event application are retrievable from the `/application_questions` endpoint.

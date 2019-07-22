@@ -6,12 +6,53 @@ use Slim\Http\Response;
 
 return function (App $app, PDO $pdo) {
 
+    $app->post('/application/{stuno}/{eventid}', function (Request $request, Response $response, array $args) use ($pdo, $app) {
+
+        $val = validate_request($request);
+        if ($val['success']){
+
+            $sub = $app->subRequest('GET', '/student_applied/'.$args['stuno'].'/'.$args['eventid'], '',
+                ['Auth'=>$request->getHeader('Auth')[0]]);
+            $appsub = json_decode((string) $sub->getBody(), true);
+
+            if ($appsub['student_applied']){
+                return $response->withStatus(409)->withJson(['msg'=>'Student has already applied.']);
+            }
+
+            // create application
+            $stmt = $pdo->prepare('INSERT INTO btr_application (student, event) VALUES (?,?)');
+            $stmt->bindParam(1, $args['stuno']);
+            $stmt->bindParam(2, $args['eventid'], PDO::PARAM_INT);
+            $stmt->execute();
+            $appid = $pdo->lastInsertId();
+
+            //insert answers
+            $stmt = $pdo->prepare('INSERT INTO btr_app_answer (question, application, answer) VALUES (?,?,?)');
+
+            $answers = $val['body']['answers'];
+            foreach(array_keys($answers) as $qid){
+
+                $stmt->bindParam(1, $qid, PDO::PARAM_INT);
+                $stmt->bindParam(2, $appid, PDO::PARAM_INT);
+                $stmt->bindParam(3, $answers[$qid]);
+                $stmt->execute();
+
+            }
+
+            return $response->withJson(['msg'=>'success']);
+
+        }else{
+            return $response->withStatus($val['code'])->withJson($val['response']);
+        }
+
+    });
+
     $app->get('/application_questions/{eventid}', function (Request $request, Response $response, array $args) use ($pdo) {
 
         $val = validate_request($request);
         if ($val['success']){
 
-            $stmt = $pdo->prepare('SELECT question_text, answer_type FROM btr_question
+            $stmt = $pdo->prepare('SELECT qid, question_text, answer_type FROM btr_question
 INNER JOIN btr_event_app_questions ON qid = question
 WHERE event = ?');
             $stmt->bindParam(1, $args['eventid'], PDO::PARAM_INT);
