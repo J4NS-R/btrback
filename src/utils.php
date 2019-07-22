@@ -10,17 +10,12 @@ require_once __DIR__ . '/environ.php';
  *  Acknowledging that requests take time, both the current 20-second interval and the previous one will be accepted.
  *  Thus keys are valid for effectively a maximum of 40 seconds.
  *  If the application is not in prod, the pre-shared key will be accepted as plaintext too.
- * @param $received_key string The value of the auth header received from the requester. Should be 'Bearer <something>'.
+ * @param $received_key string The value of the auth header received from the requester.
  * @return bool True if the key is valid. False otherwise.
  */
-function validate_auth($auth_value){
+function validate_auth($received_key){
 
-    $parts = explode(' ', $auth_value);
-    if ($parts < 2) return false;
-
-    $received_key = $parts[1];
-
-    $current_seconds = floor(time() / 1000);
+    $current_seconds = time();
     $gap1 = $current_seconds - ($current_seconds % 20);
     $gap2 = $gap1 + 20;
 
@@ -50,7 +45,7 @@ function _bad_request($code, $msg){
  */
 function validate_request(Request $req){
 
-    $auth_header = $req->getHeader('Authorisation');
+    $auth_header = $req->getHeader('Auth');
     if (sizeof($auth_header) == 0){
         return _bad_request(400, 'Auth header incorrect format');
     }

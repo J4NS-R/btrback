@@ -11,7 +11,14 @@ return function (App $app, PDO $pdo) {
 
     $app->get('/', function (Request $request, Response $response, array $args) use ($container, $pdo) {
 
-        return $response->withJson(['msg'=>'hello_world']);
+        $val = validate_request($request);
+        if ($val['success']){
+            return $response->withJson(['msg'=>'hello_world']);
+        }else{
+            return $response->withStatus($val['code'])->withJson($val['response']);
+        }
+
+
     });
 
     $app->post('/student', function (Request $request, Response $response, array $args) use ($container, $pdo) {

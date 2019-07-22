@@ -33,9 +33,11 @@ For the time being, only the official client may make requests to the backend. T
 
 Include the following header in all requests:
 
-    Authorisation: Bearer <token>
+    Auth: <token>
     
-*(Notice the 's' in Authorisation. Not strictly REST standard; it's a long story.)*
+*(Not strictly REST standard; it's a long story.)*
+
+Test whether you can make requests by requesting to root (/). You should get a `200` response if all is good.
 
 ### Endpoints
 
