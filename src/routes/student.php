@@ -16,7 +16,6 @@ return function (App $app, PDO $pdo) {
             return $response->withStatus($val['code'])->withJson($val['response']);
         }
 
-
     });
 
     $app->post('/student', function (Request $request, Response $response, array $args) use ($pdo) {

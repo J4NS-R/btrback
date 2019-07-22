@@ -6,6 +6,30 @@ use Slim\Http\Response;
 
 return function (App $app, PDO $pdo) {
 
+    $app->get('/application_questions/{eventid}', function (Request $request, Response $response, array $args) use ($pdo) {
+
+        $val = validate_request($request);
+        if ($val['success']){
+
+            $stmt = $pdo->prepare('SELECT question_text, answer_type FROM btr_question
+INNER JOIN btr_event_app_questions ON qid = question
+WHERE event = ?');
+            $stmt->bindParam(1, $args['eventid'], PDO::PARAM_INT);
+            $stmt->execute();
+
+            $questions = array();
+            while($q = $stmt->fetch()){
+                array_push($questions, $q);
+            }
+
+            return $response->withJson(['questions'=>$questions]);
+
+        }else{
+            return $response->withStatus($val['code'])->withJson($val['response']);
+        }
+
+    });
+
     $app->get('/student_applied/{stuno}/{eventid}', function (Request $request, Response $response, array $args) use ($pdo) {
 
         $val = validate_request($request);

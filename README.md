@@ -100,5 +100,44 @@ Or, if they have applied:
 
     //todo
     
+#### GET /application_questions/{eventid}
 
+Get a list of questions for the application of an event.
+
+Here are the types of answers:
+
+- `paragraph`: multi-line text.
+- `shorttext`: single-line text. Can be either a short sentence, a url, or a word.
+- `double`: floating point number.
+- `int`: integer.
+- `code`: multi-line text meant to be runnable code.
+
+Example response:
+
+    {
+      "questions": [
+        {
+          "question_text": "What motivates you?",
+          "answer_type": "paragraph"
+        },
+        {
+          "question_text": "What kind of bread are you?",
+          "answer_type": "shorttext"
+        },
+        {
+          "question_text": "How long is a piece of wood?",
+          "answer_type": "double"
+        },
+        {
+          "question_text": "How many jelly babies can you fit in your mouth?",
+          "answer_type": "int"
+        },
+        {
+          "question_text": "Write a short fibonacci program. Indicate the language at the top as a comment.",
+          "answer_type": "code"
+        }
+      ]
+    }
+    
+The array will be empty if the event does not exist, or no questions have been configured yet.
 
